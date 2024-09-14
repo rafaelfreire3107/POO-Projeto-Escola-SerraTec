@@ -1,53 +1,124 @@
 package com.escolasenai;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
-@SpringBootApplication
-public class ProjetoApplication {
+public class Nota {
+    private Disciplina disciplina;
+    private Aluno aluno;
+    private double valor;
 
-    public static void main(String[] args) {
-        SpringApplication.run(ProjetoApplication.class, args);
+    public static List<Nota> notas = new ArrayList<>();
 
-        
-        Aluno.alimentaAluno();
-        Disciplina.alimentaDisciplina();
-        Nota.alimentaNota();
-
-        
-        menuPrincipal();
+    public Nota(Disciplina disciplina, double valor, Aluno aluno) {
+        this.disciplina = disciplina;
+        this.valor = valor;
+        this.aluno = aluno;
     }
 
-    public static void menuPrincipal() {
-        Scanner sc = new Scanner(System.in);
-        int opcao;
+    public Aluno getAluno() {
+        return aluno;
+    }
 
-        do {
-            System.out.println("Escolha como prosseguir: ");
-            System.out.println("1. Acessar o menu do aluno.");
-            System.out.println("2. Acessar o menu do professor.");
-            System.out.println("0. Sair.");
+    public void setAluno(Aluno aluno) {
+        this.aluno = aluno;
+    }
 
-            opcao = sc.nextInt();
+    public Disciplina getDisciplina() {
+        return disciplina;
+    }
 
-            switch (opcao) {
-                case 1:
-                    Aluno.menuAluno();
-                    break;
-                case 2:
-                    Professor.menuProfessor();
-                    break;
-                case 0: // Correção da opção de sair
-                    System.out.println("Saindo...");
-                    break;
-                default:
-                    System.out.println("Insira um dígito válido.");
-                    break;
+    public void setDisciplina(Disciplina disciplina) {
+        this.disciplina = disciplina;
+    }
+
+    public double getValor() {
+        return valor;
+    }
+
+    public void setValor(double valor) {
+        this.valor = valor;
+    }
+
+    public static void adicionarNota() {
+        Scanner scanner = new Scanner(System.in);
+        try {
+            if (Disciplina.disciplinas.isEmpty() || Aluno.alunos.isEmpty()) {
+                System.out.println("Não há disciplinas ou alunos cadastrados.");
+                return;
             }
-        } while (opcao != 0);
 
-        sc.close(); 
+            // Escolher a disciplina
+            System.out.println("Escolha a disciplina:");
+            for (int i = 0; i < Disciplina.disciplinas.size(); i++) {
+                System.out.println((i + 1) + ". " + Disciplina.disciplinas.get(i).getNome());
+            }
+            int disciplinaIndex = scanner.nextInt() - 1;
+
+            // Verificação de índice válido
+            if (disciplinaIndex < 0 || disciplinaIndex >= Disciplina.disciplinas.size()) {
+                System.out.println("Índice de disciplina inválido.");
+                return;
+            }
+            scanner.nextLine(); // Consumir a nova linha
+            Disciplina disciplina = Disciplina.disciplinas.get(disciplinaIndex);
+
+            // Escolher o aluno
+            System.out.println("Escolha o aluno:");
+            for (int i = 0; i < Aluno.alunos.size(); i++) {
+                System.out.println((i + 1) + ". " + Aluno.alunos.get(i).getNome());
+            }
+            int alunoIndex = scanner.nextInt() - 1;
+
+            // Verificação de índice válido
+            if (alunoIndex < 0 || alunoIndex >= Aluno.alunos.size()) {
+                System.out.println("Índice de aluno inválido.");
+                return;
+            }
+            scanner.nextLine(); // Consumir a nova linha
+            Aluno aluno = Aluno.alunos.get(alunoIndex);
+
+            // Entrada do valor da nota
+            System.out.print("Digite o valor da nota: ");
+            double valorNota = scanner.nextDouble();
+
+            // Adicionar a nota
+            Nota nota = new Nota(disciplina, valorNota, aluno);
+            notas.add(nota);
+
+            System.out.println("Nota adicionada com sucesso!");
+            System.out.println("Disciplina: " + disciplina.getNome());
+            System.out.println("Aluno: " + aluno.getNome());
+            System.out.println("Nota: " + valorNota);
+
+        } catch (InputMismatchException e) {
+            System.out.println("Entrada inválida. Por favor, insira os dados corretamente.");
+            scanner.nextLine(); // Limpar a entrada inválida
+        }
+    }
+
+    public static void alimentaNota() {
+        // Verificar se há disciplinas e alunos suficientes
+        if (Disciplina.disciplinas.size() < 3 || Aluno.alunos.size() < 3) {
+            System.out.println("Não há disciplinas ou alunos suficientes para alimentar notas.");
+            return;
+        }
+
+        // Adicionar notas para testes
+        Nota nota1 = new Nota(Disciplina.disciplinas.get(0), 5.6, Aluno.alunos.get(0));
+        Nota nota2 = new Nota(Disciplina.disciplinas.get(1), 6.6, Aluno.alunos.get(0));
+        Nota nota3 = new Nota(Disciplina.disciplinas.get(0), 7.8, Aluno.alunos.get(1));
+        Nota nota4 = new Nota(Disciplina.disciplinas.get(2), 8.6, Aluno.alunos.get(2));
+        Nota nota5 = new Nota(Disciplina.disciplinas.get(0), 9.6, Aluno.alunos.get(2));
+        notas.add(nota1);
+        notas.add(nota2);
+        notas.add(nota3);
+        notas.add(nota4);
+        notas.add(nota5);
+
+        System.out.println("Notas adicionadas para testes.");
     }
 }
